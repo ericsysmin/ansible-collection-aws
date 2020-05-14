@@ -14,10 +14,14 @@
         - ansible_service_mgr == "systemd"
         - ansible_distribution == "Fedora"
       changed_when: false
-  roles:
-    - role: ericsysmin.system.epel
-    - role: geerlingguy.pip
-      pip_install_packages:
-        - name: pip
-          state: latest
-    - role: ericsysmin.aws.cfnbootstrap
+  tasks:
+    - include_role:
+        name: ericsysmin.system.epel
+    - include_role:
+        name: geerlingguy.pip
+      vars:
+        pip_install_packages:
+          - name: pip
+            state: latest
+    - include_role:
+        name: ericsysmin.aws.cfnbootstrap
