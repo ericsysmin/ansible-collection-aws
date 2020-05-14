@@ -1,3 +1,4 @@
+---
 name: "ericsysmin.aws.cfnbootstrap"
 on:
   push:

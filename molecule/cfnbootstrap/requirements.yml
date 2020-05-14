@@ -1,5 +1,5 @@
 ---
 collections:
-  - ericsysmin.system
+  - name: ericsysmin.system
 roles:
-  - geerlingguy.pip
+  - name: geerlingguy.pip
