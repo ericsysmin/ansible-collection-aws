@@ -36,6 +36,8 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v1
+        with:
+          path: ansible_collections/ericsysmin/aws
 
       - name: Set up Python 3.8
         uses: actions/setup-python@v1
@@ -46,16 +48,7 @@ jobs:
         run: |
           sudo apt install docker
           python -m pip install --upgrade pip
-          pip install git+https://github.com/ansible-community/molecule.git@master
           pip install molecule yamllint ansible-lint docker
-
-      - name: Build the collection
-        run: |
-          collection_file=$( basename $(ansible-galaxy collection build -f | awk -F" " '{print $NF}'))
-          echo "::set-env name=COLLECTION_FILE::$collection_file"
-
-      - name: Install the collection
-        run: ansible-galaxy collection install $COLLECTION_FILE
 
       - name: Run role tests
         run: >-
