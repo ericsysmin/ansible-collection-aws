@@ -1,0 +1,4 @@
+---
+# vars file for aws-cfn-bootstrap
+cfnbootstrap_pkg_version: 1.4-30
+cfnbootstrap_version: 1.4

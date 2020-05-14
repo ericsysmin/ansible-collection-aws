@@ -1,0 +1,49 @@
+---
+- name: CFN Bootstrap | Install Python Modules
+  pip:
+    name:
+      - pystache
+      - argparse
+      - docutils
+      - python-daemon
+      - requests
+    state: present
+  register: task_result
+  until: task_result is success
+  retries: 10
+  delay: 2
+
+- name: CFN Bootstrap | Unarchive aws-cfn-bootstrap
+  unarchive:
+    src: https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-{{ cfnbootstrap_pkg_version }}.tar.gz
+    dest: /opt
+    remote_src: true
+
+- name: CFN Bootstrap | Install CFN Bootstrap Module
+  pip: name=https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-{{ cfnbootstrap_pkg_version }}.tar.gz
+  register: task_result
+  until: task_result is success
+  retries: 10
+  delay: 2
+
+- name: CFN Bootstrap | RedHat | Install CFN Bootstrap Init
+  command: cp /opt/aws-cfn-bootstrap-{{ cfnbootstrap_version }}/init/redhat/cfn-hup /etc/init.d/cfn-hup
+  args:
+    creates: /etc/init.d/cfn-hup
+  when: ansible_os_family == "RedHat"
+
+- name: CFN Bootstrap | Ubuntu | Install CFN Bootstrap Init
+  command: cp /opt/aws-cfn-bootstrap-{{ cfnbootstrap_version }}/init/ubuntu/cfn-hup /etc/init.d/cfn-hup
+  args:
+    creates: /etc/init.d/cfn-hup
+  when: ansible_os_family == "Debian"
+
+- name: CFN Bootstrap | Set /etc/init.d/cfn-hup permissions
+  file: path=/etc/init.d/cfn-hup mode=0755
+
+- name: Create /opt/aws/bin/ directory
+  file: path=/opt/aws/bin/ state=directory
+
+- name: Create link file from /usr/bin/cfn-hup to /opt/aws/bin/cfn-hup
+  file: src=/usr/bin/cfn-hup dest=/opt/aws/bin/cfn-hup state=link
+  when: ansible_os_family == "RedHat"

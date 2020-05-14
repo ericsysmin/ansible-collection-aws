@@ -1,0 +1,5 @@
+---
+collections:
+  - ericsysmin.system
+roles:
+  - geerlingguy.pip
